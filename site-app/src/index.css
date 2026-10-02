@@ -1,0 +1,60 @@
+:root {
+  --surface: #ffffff;
+  --surface-2: #f2f7fc;
+  --surface-cream: #f7f3ec;
+  --surface-accent: #eaf2fb;
+  --surface-blur: rgba(255, 255, 255, .92);
+  --ink: #1c3a5f;
+  --ink-2: #566577;
+  --muted: #6b7a8c;
+  --line: #e7eef5;
+  --line-cream: #e4dccd;
+  --line-strong: #d4e0ec;
+  --page: #ffffff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { width: 100%; }
+
+body {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  background: var(--page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background .3s ease, color .3s ease;
+}
+
+input, select, button { font-family: inherit; }
+
+button { cursor: pointer; }
+
+::selection { background: #15499a; color: #fff; }
+
+/* acessibilidade: anel de foco visível só para navegação por teclado */
+:focus-visible { outline: 2px solid #15499a; outline-offset: 2px; border-radius: 4px; }
+:focus:not(:focus-visible) { outline: none; }
+
+/* respeita quem prefere menos animação */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { from { opacity: 0; transform: translateY(20px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* Modal de login glass (dark navy): placeholders e autofill legíveis sobre vidro escuro */
+.authglass input::placeholder { color: rgba(255,255,255,.5); }
+.authglass input:-webkit-autofill,
+.authglass input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0 40px #16305a inset;
+  caret-color: #fff;
+}
+.authglass input:focus { border-color: rgba(227,192,116,.7); }

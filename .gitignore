@@ -1,0 +1,39 @@
+# Dependências
+node_modules/
+**/node_modules/
+
+# Builds
+dist/
+**/dist/
+build/
+
+# Segredos — NUNCA versionar
+.env
+**/.env
+*.env
+!*.env.example
+!.env.example
+
+# Dados de cliente e banco (SQLite) — NUNCA versionar
+painel-admin/server/data/
+**/data/
+*.sqlite
+*.sqlite3
+*.db
+uploads/
+docs/
+
+# Logs
+logs/
+*.log
+
+# Backups de deploy
+*.bak
+*.bak-*
+html.bak-*
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>MC Flats — teste de animação</title>
+<meta name="description" content="Apartamentos premium em Ipanema e Leblon." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   MESMO VISUAL DO SITE ATUAL (App.tsx) — tema claro, marinho + dourado.
+   Nada de redesenho: só as cores/tipos/medidas existentes.
+   As ANIMAÇÕES ficam isoladas no fim do arquivo.
+   ============================================================ */
+:root {
+  --brand:#15499a; --brand-hover:#0f3a82; --ink:#1c3a5f;
+  --gold:#d6ad63; --gold-2:#e3c074; --gold-3:#b88a3e;
+  --txt-2:#5a6b80; --txt-3:#9aa9bb;
+  --cream:#f7f3ec; --navy:#12305a;
+  --line:#eef3f8; --line-2:#e7eef5; --line-3:#e2ebf4;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { background:#fff; color:var(--ink); font-family:'Manrope',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; }
+img { display:block; max-width:100%; }
+a { color:inherit; text-decoration:none; }
+h1,h2,h3 { font-family:'Montserrat',sans-serif; letter-spacing:-.015em; line-height:1.1; }
+.wrap { max-width:1360px; margin:0 auto; }
+.eyebrow { font:700 12px/1 'Montserrat',sans-serif; letter-spacing:.22em; text-transform:uppercase; color:var(--brand); }
+
+/* ---------- HEADER ---------- */
+header {
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between;
+  padding:14px 48px; background:rgba(255,255,255,.92); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line); transition:box-shadow .3s ease;
+}
+header.scrolled { box-shadow:0 10px 30px -18px rgba(28,58,95,.28); }
+.logo { display:flex; align-items:baseline; gap:1px; font:800 24px/1 'Montserrat',sans-serif; color:var(--ink); cursor:pointer; }
+.logo b { color:var(--gold); }
+nav.main { display:flex; gap:30px; font:600 14px/1 'Manrope',sans-serif; color:var(--ink); }
+nav.main a { cursor:pointer; transition:color .2s ease; }
+nav.main a:hover { color:var(--brand); }
+.head-right { display:flex; align-items:center; gap:18px; }
+.fav { display:flex; align-items:center; gap:7px; font:600 13px/1 'Manrope',sans-serif; color:var(--ink); cursor:pointer; }
+.fav i { color:var(--gold); font-size:15px; font-style:normal; }
+.reserve { font:700 13px/1 'Manrope',sans-serif; color:#fff; background:var(--brand); border:none; border-radius:9px; padding:12px 22px; cursor:pointer; transition:background .2s ease; }
+.reserve:hover { background:var(--brand-hover); }
+
+/* ---------- HERO ---------- */
+.hero { position:relative; height:740px; padding:0 56px 150px; display:flex; flex-direction:column; justify-content:flex-end; }
+.hero-bgwrap { position:absolute; inset:0; overflow:hidden; z-index:0; }
+.hero-bg {
+  position:absolute; left:0; right:0; top:-20%; height:140%; will-change:transform;
+  background:linear-gradient(180deg, rgba(18,40,70,.28) 0%, rgba(18,40,70,0) 20%, rgba(18,40,70,0) 36%, rgba(18,40,70,.48) 74%, rgba(18,40,70,.68) 100%), url('src/images/hero.png') center 44%/cover no-repeat;
+}
+.hero-inner { position:relative; z-index:2; max-width:680px; }
+.badge {
+  display:inline-flex; align-items:center; gap:9px; font:700 11px/1 'Montserrat',sans-serif; letter-spacing:.2em; text-transform:uppercase;
+  color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3); border-radius:100px; padding:10px 18px; margin-bottom:24px;
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.badge i { color:var(--gold-2); font-style:normal; }
+.hero h1 { font:800 60px/1.06 'Montserrat',sans-serif; color:#fff; letter-spacing:-.02em; text-shadow:0 2px 30px rgba(10,24,45,.35); }
+.gold-rule { width:64px; height:3px; background:var(--gold); border-radius:3px; margin:24px 0 22px; }
+.hero p { font:400 18.5px/1.62 'Manrope',sans-serif; color:rgba(255,255,255,.92); max-width:560px; text-shadow:0 1px 16px rgba(10,24,45,.4); }
+
+/* ---------- SEARCH CARD ---------- */
+.search {
+  position:absolute; left:56px; right:56px; bottom:-44px; z-index:5;
+  background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 24px 60px -22px rgba(28,58,95,.4);
+  padding:14px; display:flex; align-items:stretch;
+}
+.search .field { padding:12px 22px; display:flex; flex-direction:column; justify-content:center; }
+.search .f-where { flex:1.5; } .search .f-rest { flex:1; }
+.search .field label { font:700 10.5px/1 'Montserrat',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--txt-3); margin-bottom:8px; }
+.search .field select, .search .field input { border:none; outline:none; background:transparent; font:600 16px/1.1 'Manrope',sans-serif; color:var(--ink); cursor:pointer; width:100%; }
+.search .vline { width:1px; background:var(--line-2); margin:8px 0; }
+.search .guests { display:flex; align-items:center; gap:14px; }
+.search .step { width:26px; height:26px; border-radius:50%; border:1.5px solid #d4e0ec; display:flex; align-items:center; justify-content:center; font:700 16px/1 'Manrope',sans-serif; color:var(--brand); cursor:pointer; user-select:none; transition:border-color .2s ease; }
+.search .step:hover { border-color:var(--brand); }
+.search .gval { font:600 16px/1 'Manrope',sans-serif; color:var(--ink); min-width:18px; text-align:center; }
+.search .go { display:flex; align-items:center; padding-left:8px; }
+.search .buscar { font:700 15px/1 'Manrope',sans-serif; color:#fff; background:var(--brand); border:none; border-radius:11px; padding:20px 40px; cursor:pointer; transition:background .2s ease; }
+.search .buscar:hover { background:var(--brand-hover); }
+
+/* ---------- TRUST ---------- */
+.trust { display:flex; align-items:center; justify-content:center; gap:44px; padding:78px 48px 26px; background:#fff; flex-wrap:wrap; }
+.trust .rate { display:flex; align-items:center; gap:10px; }
+.trust .rate b { font:800 26px/1 'Montserrat',sans-serif; color:var(--brand); }
+.trust .rate small { font:500 13px/1.3 'Manrope',sans-serif; color:var(--txt-2); }
+.trust .rate small i { color:var(--gold); font-style:normal; }
+.trust .vbar { width:1px; height:34px; background:var(--line-3); }
+.trust .item { font:600 14px/1 'Manrope',sans-serif; color:var(--ink); }
+
+/* ---------- SECTION HEADS ---------- */
+.sec-c { padding:50px 56px 60px; background:#fff; }
+.sec-head { text-align:center; max-width:640px; margin:0 auto 40px; }
+.sec-head .eyebrow { margin-bottom:14px; }
+.sec-head h2 { font:800 38px/1.12 'Montserrat',sans-serif; color:var(--ink); letter-spacing:-.015em; }
+
+/* ---------- NEIGHBORHOODS ---------- */
+.hoods { display:grid; grid-template-columns:1fr 1fr; gap:26px; }
+.hood { position:relative; border-radius:18px; overflow:hidden; height:440px; box-shadow:0 24px 50px -26px rgba(28,58,95,.4); cursor:pointer; }
+.hood .hbg { position:absolute; inset:0; background-size:cover; background-position:center; background-repeat:no-repeat; transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+.hood:hover .hbg { transform:scale(1.06); }
+.hood .scrim { position:absolute; inset:0; background:linear-gradient(180deg, rgba(18,40,70,.05) 0%, rgba(18,40,70,.1) 42%, rgba(18,40,70,.8) 100%); }
+.hood .pill { position:absolute; top:20px; left:20px; font:700 11px/1 'Manrope',sans-serif; color:var(--brand); background:rgba(255,255,255,.94); border-radius:100px; padding:9px 15px; }
+.hood .hbody { position:absolute; left:30px; right:30px; bottom:30px; }
+.hood .hbody h3 { font:800 32px/1 'Montserrat',sans-serif; color:#fff; letter-spacing:-.01em; margin-bottom:10px; }
+.hood .hbody p { font:400 14.5px/1.6 'Manrope',sans-serif; color:rgba(255,255,255,.9); max-width:380px; margin-bottom:18px; }
+.hood .hbody .go { display:inline-flex; align-items:center; gap:8px; font:700 13.5px/1 'Manrope',sans-serif; color:var(--ink); background:#fff; border-radius:9px; padding:13px 20px; }
+.hood .hbody .go i { color:var(--gold); font-style:normal; }
+
+/* ---------- FEATURED ---------- */
+.feat-c { padding:24px 56px 64px; background:#fff; }
+.feat-top { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:30px; }
+.feat-top .eyebrow { margin-bottom:12px; }
+.feat-top h2 { font:800 34px/1 'Montserrat',sans-serif; color:var(--ink); letter-spacing:-.01em; }
+.feat-top .all { font:700 13.5px/1 'Manrope',sans-serif; color:var(--brand); cursor:pointer; }
+.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+.card { background:#fff; border:1px solid var(--line-2); border-radius:14px; overflow:hidden; cursor:pointer; transition:transform .25s ease, box-shadow .25s ease; }
+.card:hover { transform:translateY(-4px); box-shadow:0 20px 40px -22px rgba(28,58,95,.45); }
+.card .ph { position:relative; aspect-ratio:4/3; overflow:hidden; }
+.card .ph img { width:100%; height:100%; object-fit:cover; transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+.card:hover .ph img { transform:scale(1.05); }
+.card .hoodtag { position:absolute; top:12px; left:12px; font:700 10px/1 'Manrope',sans-serif; color:var(--brand); background:rgba(255,255,255,.95); border-radius:100px; padding:6px 11px; text-transform:capitalize; }
+.card .heart { position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.95); display:flex; align-items:center; justify-content:center; font:400 16px/1 serif; color:var(--brand); cursor:pointer; }
+.card .tag { position:absolute; bottom:12px; left:12px; font:700 10px/1 'Manrope',sans-serif; color:var(--ink); background:var(--gold-2); border-radius:100px; padding:6px 11px; }
+.card .cbody { padding:16px 16px 18px; }
+.card .stars { display:flex; align-items:center; gap:6px; margin-bottom:8px; font:700 12px/1 'Manrope',sans-serif; color:var(--ink); }
+.card .stars i { color:var(--gold); font-style:normal; }
+.card .stars small { font-weight:400; color:var(--txt-3); }
+.card h3 { font:700 15px/1.3 'Manrope',sans-serif; color:var(--ink); margin-bottom:8px; }
+.card .meta { font:400 12.5px/1 'Manrope',sans-serif; color:var(--txt-2); margin-bottom:14px; }
+.card .foot { display:flex; align-items:baseline; justify-content:space-between; border-top:1px solid var(--line); padding-top:13px; }
+.card .price b { font:800 17px/1 'Montserrat',sans-serif; color:var(--ink); }
+.card .price small { font:400 12px/1 'Manrope',sans-serif; color:var(--txt-3); }
+.card .see { font:700 12.5px/1 'Manrope',sans-serif; color:var(--brand); }
+
+/* ---------- TRADITION ---------- */
+.tradition { padding:64px 56px; background:var(--cream); display:grid; grid-template-columns:.82fr 1.18fr; gap:56px; align-items:center; }
+.tradition .eyebrow { color:var(--gold-3); margin-bottom:16px; }
+.tradition h2 { font:800 34px/1.16 'Montserrat',sans-serif; color:var(--ink); letter-spacing:-.015em; margin-bottom:18px; }
+.tradition p.lead { font:400 15.5px/1.7 'Manrope',sans-serif; color:var(--txt-2); margin-bottom:26px; max-width:420px; }
+.stats { display:flex; gap:32px; }
+.stats .n { font:800 38px/1 'Montserrat',sans-serif; color:var(--brand); }
+.stats small { display:block; font:600 12px/1.3 'Manrope',sans-serif; color:var(--txt-2); margin-top:6px; }
+.stats .vbar { width:1px; background:#e4dccd; }
+.tgrid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#e4dccd; border:1px solid #e4dccd; border-radius:14px; overflow:hidden; }
+.tgrid .cell { background:var(--cream); padding:26px 28px; }
+.tgrid .cell .dot { width:30px; height:2px; background:var(--gold); margin-bottom:16px; }
+.tgrid .cell h4 { font:700 16px/1.2 'Manrope',sans-serif; color:var(--ink); margin-bottom:8px; }
+.tgrid .cell p { font:400 13.5px/1.6 'Manrope',sans-serif; color:var(--txt-2); }
+
+/* ---------- FOOTER ---------- */
+footer { background:var(--navy); padding:50px 56px 28px; color:#fff; }
+.foot-row { display:grid; grid-template-columns:1.4fr 1fr 1fr 1.2fr; gap:40px; padding-bottom:38px; border-bottom:1px solid rgba(255,255,255,.14); }
+.foot-row .flogo { font:800 26px/1 'Montserrat',sans-serif; color:#fff; margin-bottom:18px; }
+.foot-row .flogo b { color:var(--gold); }
+.foot-row p.about { font:400 13.5px/1.7 'Manrope',sans-serif; color:rgba(255,255,255,.62); max-width:280px; }
+.foot-row h5 { font:700 11px/1 'Montserrat',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#fff; margin-bottom:16px; }
+.foot-row .lk { display:block; font:400 13.5px/2.2 'Manrope',sans-serif; color:rgba(255,255,255,.72); cursor:pointer; }
+.foot-row .wa-btn { display:inline-block; margin-top:14px; font:700 12.5px/1 'Manrope',sans-serif; color:var(--navy); background:#3fc35a; border-radius:8px; padding:11px 16px; cursor:pointer; transition:background .2s ease; }
+.foot-row .wa-btn:hover { background:#36b04e; }
+.foot-bottom { display:flex; align-items:center; justify-content:space-between; padding-top:22px; font:400 12px/1 'Manrope',sans-serif; color:rgba(255,255,255,.5); }
+
+/* ============================================================
+   CINEMATIC — seção full-bleed com scroll suave (efeito ALTANA),
+   na identidade MC Flats (claro, marinho + dourado).
+   ============================================================ */
+.cinematic { position:relative; height:240vh; background:#fff; }
+.cine-stage { position:sticky; top:0; height:100svh; min-height:560px; overflow:hidden; background:var(--ink); }
+.scene { position:absolute; inset:0; opacity:0; will-change:opacity; }
+.scene-vid { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.scene::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(12,26,48,.22) 0%, rgba(12,26,48,.02) 30%, rgba(12,26,48,.06) 54%, rgba(12,26,48,.60) 100%); }
+.cine-ui { position:absolute; inset:0; z-index:3; pointer-events:none; }
+.cine-eyebrow { position:absolute; top:100px; left:56px; display:flex; align-items:center; gap:12px; font:700 12px/1 'Montserrat',sans-serif; letter-spacing:.24em; text-transform:uppercase; color:#fff; opacity:.92; }
+.cine-eyebrow::before { content:''; width:30px; height:2px; background:var(--gold); }
+.cine-caps { position:absolute; left:56px; right:56px; bottom:104px; height:250px; }
+.cine-cap { position:absolute; left:0; bottom:0; max-width:640px; opacity:0; will-change:opacity,transform; }
+.cine-cap h2 { font:800 clamp(30px,5vw,58px)/1.05 'Montserrat',sans-serif; color:#fff; letter-spacing:-.02em; text-shadow:0 2px 30px rgba(8,18,36,.45); margin-bottom:14px; }
+.cine-cap .rule { width:64px; height:3px; background:var(--gold); border-radius:3px; margin-bottom:16px; }
+.cine-cap p { font:400 clamp(15px,2vw,19px)/1.62 'Manrope',sans-serif; color:rgba(255,255,255,.92); max-width:520px; text-shadow:0 1px 14px rgba(8,18,36,.45); }
+.cine-cap .cbtn { display:inline-block; margin-top:24px; pointer-events:auto; font:700 14px/1 'Manrope',sans-serif; color:var(--ink); background:#fff; border-radius:10px; padding:15px 28px; cursor:pointer; transition:transform .15s ease; }
+.cine-dots { position:absolute; right:42px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; }
+.cine-dots span { width:8px; height:8px; border-radius:100px; background:rgba(255,255,255,.42); transition:background .3s ease, height .3s ease; }
+.cine-dots span.on { background:var(--gold); height:24px; }
+.cine-cue { position:absolute; left:50%; bottom:34px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:7px; font:600 11px/1 'Manrope',sans-serif; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.85); transition:opacity .4s ease; animation:cueBob 1.9s ease-in-out infinite; }
+.cine-cue i { font-style:normal; font-size:15px; }
+@keyframes cueBob { 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{ transform:translateX(-50%) translateY(6px);} }
+
+/* header transparente enquanto sobre a seção cinematográfica */
+header.on-cine { background:transparent; -webkit-backdrop-filter:none; backdrop-filter:none; border-bottom-color:transparent; box-shadow:none; }
+header.on-cine .logo, header.on-cine nav.main a, header.on-cine .fav { color:#fff; }
+header.on-cine .logo b { color:var(--gold); }
+header.on-cine nav.main a:hover { color:var(--gold); }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .cinematic{ height:220vh; }
+  .cine-eyebrow{ top:80px; left:20px; }
+  .cine-caps{ left:20px; right:20px; bottom:72px; }
+  .cine-dots{ right:18px; }
+  nav.main{ display:none; }
+  .hero{ height:auto; padding:104px 20px 36px; justify-content:flex-start; }
+  .search{ position:static; margin-top:26px; left:auto; right:auto; bottom:auto; flex-direction:column; }
+  .search .vline{ display:none; }
+  .search .buscar{ width:100%; }
+  .hero h1{ font-size:34px; }
+  .hero p{ font-size:15px; }
+  .sec-c,.feat-c{ padding:34px 20px 44px; }
+  .hoods,.grid,.tradition,.foot-row{ grid-template-columns:1fr; }
+  .grid{ grid-template-columns:1fr 1fr; }
+  .tradition{ padding:40px 20px; gap:32px; }
+  .feat-top{ flex-direction:column; align-items:flex-start; gap:8px; }
+  .foot-row{ grid-template-columns:1fr 1fr; gap:28px 20px; }
+  header{ padding:11px 20px; }
+}
+@media (max-width:560px){ .grid{ grid-template-columns:1fr; } .trust{ gap:14px 20px; } }
+
+/* ============================================================
+   ANIMAÇÃO — a ÚNICA coisa nova. Tudo respeita reduced-motion.
+   ============================================================ */
+/* barra de progresso de scroll */
+#progress { position:fixed; top:0; left:0; height:3px; width:0; z-index:100; background:linear-gradient(90deg,var(--brand),var(--gold)); transition:width .08s linear; }
+
+/* entrada do hero (fade-up sequencial) */
+.a-seq { opacity:0; transform:translateY(18px); animation:seqUp .8s cubic-bezier(.2,.7,.2,1) forwards; }
+.a-seq.s1{ animation-delay:.05s; } .a-seq.s2{ animation-delay:.16s; } .a-seq.s3{ animation-delay:.27s; } .a-seq.s4{ animation-delay:.38s; }
+@keyframes seqUp { to { opacity:1; transform:none; } }
+/* headline com máscara (linhas sobem) */
+.rl { display:block; overflow:hidden; }
+.rl > span { display:block; transform:translateY(112%); animation:rlUp .95s cubic-bezier(.2,.75,.2,1) forwards; }
+.hero h1 .rl:nth-child(2) > span { animation-delay:.1s; }
+@keyframes rlUp { to { transform:none; } }
+/* barra dourada cresce */
+.gold-rule.a-seq { transform:scaleX(0); transform-origin:left; animation:ruleGrow .7s .5s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes ruleGrow { to { transform:scaleX(1); opacity:1; } }
+
+/* reveal no scroll */
+.r { opacity:0; transform:translateY(30px); transition:opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); }
+.r.in { opacity:1; transform:none; }
+.r.d1{ transition-delay:.09s; } .r.d2{ transition-delay:.18s; } .r.d3{ transition-delay:.27s; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001ms!important; animation-delay:0ms!important; transition-duration:.001ms!important; scroll-behavior:auto!important; }
+  .a-seq,.rl>span,.gold-rule.a-seq,.r{ opacity:1!important; transform:none!important; }
+}
+</style>
+</head>
+
+<body>
+<div id="progress"></div>
+
+<!-- ============ HEADER ============ -->
+<header id="hdr">
+  <div class="logo">MC<b>Flats</b></div>
+  <nav class="main">
+    <a href="#hoods">Ipanema</a>
+    <a href="#hoods">Leblon</a>
+    <a href="#featured">Apartamentos</a>
+    <a href="#tradicao">Proprietários</a>
+  </nav>
+  <div class="head-right">
+    <span class="fav"><i>♥</i> Favoritos · 0</span>
+    <button class="reserve" data-magnetic>Reservar</button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <div class="hero-bgwrap"><div class="hero-bg" id="heroBg"></div></div>
+  <div class="hero-inner">
+    <div class="badge a-seq s1"><i>★</i> Mais de 30 anos no Rio de Janeiro</div>
+    <h1>
+      <span class="rl"><span>Apartamentos premium em</span></span>
+      <span class="rl"><span>Ipanema e Leblon</span></span>
+    </h1>
+    <div class="gold-rule a-seq"></div>
+    <p class="a-seq s3">Hospedagem, locação por temporada e administração de imóveis com a experiência de quem conhece a Zona Sul do Rio há mais de 30 anos.</p>
+  </div>
+
+  <!-- search card -->
+  <div class="search a-seq s4">
+    <div class="field f-where">
+      <label>Onde</label>
+      <select><option>Todos os bairros</option><option>Ipanema</option><option>Leblon</option></select>
+    </div>
+    <div class="vline"></div>
+    <div class="field f-rest"><label>Check-in</label><input type="date" value="2026-07-12" /></div>
+    <div class="vline"></div>
+    <div class="field f-rest"><label>Check-out</label><input type="date" value="2026-07-18" /></div>
+    <div class="vline"></div>
+    <div class="field f-rest">
+      <label>Hóspedes</label>
+      <div class="guests"><span class="step" data-g="-1">−</span><span class="gval" id="gval">2</span><span class="step" data-g="1">+</span></div>
+    </div>
+    <div class="go"><button class="buscar" data-magnetic>Buscar</button></div>
+  </div>
+</div>
+
+<!-- ============ TRUST ============ -->
+<div class="trust">
+  <div class="rate r"><b class="count" data-to="4.9" data-dec="1">4.9</b><small><i>★★★★★</i><br><span class="count" data-to="1240">1.240</span> avaliações</small></div>
+  <div class="vbar"></div>
+  <div class="item r d1">Recepção 24h</div>
+  <div class="vbar"></div>
+  <div class="item r d1">Reserva em 2 minutos</div>
+  <div class="vbar"></div>
+  <div class="item r d2">Cancelamento flexível</div>
+  <div class="vbar"></div>
+  <div class="item r d2">Pagamento seguro</div>
+</div>
+
+<!-- ============ CINEMATIC (efeito ALTANA na identidade MC Flats) ============ -->
+<section class="cinematic" id="cinema">
+  <div class="cine-stage">
+    <div class="scene" data-i="0"><video class="scene-vid" src="src/video/cine-1.mp4" autoplay muted loop playsinline preload="auto"></video></div>
+    <div class="scene" data-i="1"><video class="scene-vid" src="src/video/cine-2.mp4" autoplay muted loop playsinline preload="auto"></video></div>
+
+    <div class="cine-ui">
+      <div class="cine-eyebrow">A experiência MC Flats</div>
+      <div class="cine-caps">
+        <div class="cine-cap" data-i="0">
+          <h2>Acorde de frente<br>para o mar</h2>
+          <div class="rule"></div>
+          <p>Apartamentos a poucos passos da praia de Ipanema, no coração da Zona Sul carioca.</p>
+        </div>
+        <div class="cine-cap" data-i="1">
+          <h2>Conforto de casa,<br>serviço de hotel</h2>
+          <div class="rule"></div>
+          <p>Interiores claros e arejados, arrumação diária e recepção 24h — o cuidado de quem conhece o Rio há 30 anos.</p>
+          <span class="cbtn" data-magnetic>Ver apartamentos →</span>
+        </div>
+      </div>
+      <div class="cine-dots"><span class="on"></span><span></span></div>
+      <div class="cine-cue">role para explorar <i>↓</i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEIGHBORHOODS ============ -->
+<div class="sec-c" id="hoods">
+  <div class="wrap">
+    <div class="sec-head r">
+      <div class="eyebrow">Onde a MC Flats atua</div>
+      <h2>Dois endereços, a mesma Zona Sul nobre</h2>
+    </div>
+    <div class="hoods">
+      <div class="hood r">
+        <div class="hbg" style="background-image:url('src/images/ipanema.png')"></div>
+        <div class="scrim"></div>
+        <div class="pill">8 apartamentos</div>
+        <div class="hbody">
+          <h3>Ipanema</h3>
+          <p>Próximos à praia, ao metrô, restaurantes e aos principais pontos da Zona Sul.</p>
+          <span class="go">Ver apartamentos <i>→</i></span>
+        </div>
+      </div>
+      <div class="hood r d1">
+        <div class="hbg" style="background-image:url('src/images/leblon.png')"></div>
+        <div class="scrim"></div>
+        <div class="pill">4 apartamentos</div>
+        <div class="hbody">
+          <h3>Leblon</h3>
+          <p>Localização nobre, conforto e a tranquilidade do bairro mais sofisticado do Rio.</p>
+          <span class="go">Ver apartamentos <i>→</i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FEATURED ============ -->
+<div class="feat-c" id="featured">
+  <div class="wrap">
+    <div class="feat-top r">
+      <div>
+        <div class="eyebrow">Seleção MC Flats</div>
+        <h2>Apartamentos em destaque</h2>
+      </div>
+      <span class="all">Ver todos os 11 →</span>
+    </div>
+    <div class="grid" id="cards"></div>
+  </div>
+</div>
+
+<!-- ============ TRADITION ============ -->
+<div class="tradition" id="tradicao">
+  <div class="r">
+    <div class="eyebrow">Tradição carioca</div>
+    <h2>Mais de 30 anos no mercado imobiliário do Rio</h2>
+    <p class="lead">Conhecemos cada quadra de Ipanema e Leblon. Cuidamos da hospedagem dos nossos hóspedes e da rentabilidade dos nossos proprietários com a mesma dedicação.</p>
+    <div class="stats">
+      <div><div class="n count" data-to="30" data-suf="+">30+</div><small>anos de<br>experiência</small></div>
+      <div class="vbar"></div>
+      <div><div class="n count" data-to="11">11</div><small>apartamentos<br>na Zona Sul</small></div>
+      <div class="vbar"></div>
+      <div><div class="n count" data-to="4.9" data-dec="1">4.9</div><small>avaliação<br>dos hóspedes</small></div>
+    </div>
+  </div>
+  <div class="tgrid r d1">
+    <div class="cell"><div class="dot"></div><h4>Administração de imóveis</h4><p>Gestão completa da sua unidade, da divulgação ao repasse.</p></div>
+    <div class="cell"><div class="dot"></div><h4>Locação por temporada</h4><p>Reservas o ano todo, com ocupação otimizada e suporte 24h.</p></div>
+    <div class="cell"><div class="dot"></div><h4>Atendimento personalizado</h4><p>Relação próxima com hóspedes e proprietários, de pessoa para pessoa.</p></div>
+    <div class="cell"><div class="dot"></div><h4>Apartamentos bem localizados</h4><p>Endereços selecionados a minutos da praia e do melhor da Zona Sul.</p></div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-row">
+    <div>
+      <div class="flogo">MC<b>Flats</b></div>
+      <p class="about">Vendas e aluguéis de temporada em Leblon e Ipanema. Conforto de casa com serviço de hotel, há mais de 30 anos.</p>
+    </div>
+    <div>
+      <h5>Apartamentos</h5>
+      <span class="lk">Ipanema</span><span class="lk">Leblon</span><span class="lk">Ver todos</span><span class="lk">Favoritos</span>
+    </div>
+    <div>
+      <h5>Institucional</h5>
+      <span class="lk">Quem somos</span><span class="lk">Administração de imóveis</span><span class="lk">Reservas corporativas</span><span class="lk">FAQ</span>
+    </div>
+    <div>
+      <h5>Contato</h5>
+      <span class="lk">reservas@mcflats.com.br</span><span class="lk">+55 21 2523-5959</span><span class="lk">+55 21 98136-6864</span>
+      <a class="wa-btn" href="https://wa.me/5521981366864" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 MC Flats — Vendas e Aluguéis de Temporada</span>
+    <span>Instagram · Facebook</span>
+  </div>
+</footer>
+
+<!-- scroll suave opcional (falha graciosa offline) -->
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+/* dados reais dos 4 destaques (ids 5,1,10,4 do data.ts) */
+var APTS = [
+  { name:'Beach Star 403', hood:'ipanema', meta:'1 quarto · 1 banheiro · 3 hóspedes', price:750, rating:4.9, reviews:56, tag:'Mais reservado', img:'1502672260266-1c1ef2d93688' },
+  { name:'Monsieur Le Blond 606', hood:'leblon', meta:'1 quarto · 1 banheiro · 3 hóspedes', price:690, rating:4.9, reviews:32, tag:'', img:'1522708323590-d24dbb6b0267' },
+  { name:'Farme 305', hood:'ipanema', meta:'2 quartos · 2 banheiros · 4 hóspedes', price:980, rating:4.9, reviews:61, tag:'2 quartos', img:'1560448204-e02f11c3d0e2' },
+  { name:'The Claridge 1101', hood:'leblon', meta:'1 quarto · 1 banheiro · 3 hóspedes', price:880, rating:4.9, reviews:41, tag:'Vista mar', img:'1560185007-cde436f6a4d0' }
+];
+var fmt = function(n){ return 'R$ ' + n.toLocaleString('pt-BR'); };
+var uns = function(id){ return 'https://images.unsplash.com/photo-' + id + '?w=900&q=72&auto=format&fit=crop'; };
+document.getElementById('cards').innerHTML = APTS.map(function(a,i){
+  return '<article class="card r d'+(i%4)+'">'+
+    '<div class="ph">'+
+      '<img src="'+uns(a.img)+'" alt="'+a.name+'" loading="lazy" />'+
+      '<span class="hoodtag">'+a.hood+'</span>'+
+      '<span class="heart">♡</span>'+
+      (a.tag ? '<span class="tag">'+a.tag+'</span>' : '')+
+    '</div>'+
+    '<div class="cbody">'+
+      '<div class="stars"><i>★</i> '+a.rating.toFixed(1)+' <small>('+a.reviews+')</small></div>'+
+      '<h3>'+a.name+'</h3>'+
+      '<div class="meta">'+a.meta+'</div>'+
+      '<div class="foot"><div class="price"><b>'+fmt(a.price)+'</b><small> /noite</small></div><span class="see">Ver →</span></div>'+
+    '</div>'+
+  '</article>';
+}).join('');
+
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* barra de progresso + header sombra + parallax do hero */
+var progress = document.getElementById('progress');
+var heroBg = document.getElementById('heroBg');
+function onScroll(){
+  var h = document.documentElement;
+  var max = h.scrollHeight - h.clientHeight;
+  progress.style.width = (max > 0 ? (h.scrollTop / max * 100) : 0) + '%';
+  document.getElementById('hdr').classList.toggle('scrolled', h.scrollTop > 8);
+  if (!reduce && window.innerWidth >= 760) {
+    var y = window.scrollY || 0;
+    heroBg.style.transform = 'translate3d(0,'+(y*0.4)+'px,0) scale('+(1 + Math.min(y,900)/4500)+')';
+  }
+}
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+
+/* reveal no scroll + count-up dos números */
+function countUp(el){
+  var to = parseFloat(el.getAttribute('data-to'));
+  var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
+  var suf = el.getAttribute('data-suf') || '';
+  if (reduce){ el.textContent = to.toLocaleString('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec}) + suf; return; }
+  var start = null, dur = 1100;
+  function tick(t){
+    if (start === null) start = t;
+    var p = Math.min((t - start)/dur, 1);
+    var e = 1 - Math.pow(1 - p, 3);
+    var v = to * e;
+    el.textContent = v.toLocaleString('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec}) + suf;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+var io = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if (e.isIntersecting){
+      e.target.classList.add('in');
+      e.target.querySelectorAll('.count').forEach(countUp);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold:0.16, rootMargin:'0px 0px -8% 0px' });
+document.querySelectorAll('.r').forEach(function(el){ io.observe(el); });
+
+/* stepper de hóspedes */
+var g = 2, gval = document.getElementById('gval');
+document.querySelectorAll('.step').forEach(function(s){
+  s.addEventListener('click', function(){
+    g = Math.max(1, Math.min(8, g + parseInt(s.getAttribute('data-g'),10)));
+    gval.textContent = g;
+  });
+});
+
+/* ---------- CINEMATIC: scroll-driven crossfade + Ken Burns + parallax ---------- */
+(function(){
+  var sec = document.getElementById('cinema');
+  if (!sec) return;
+  var scenes = [].slice.call(sec.querySelectorAll('.scene'));
+  var caps = [].slice.call(sec.querySelectorAll('.cine-cap'));
+  var dots = [].slice.call(sec.querySelectorAll('.cine-dots span'));
+  var cue = sec.querySelector('.cine-cue');
+  var hdr = document.getElementById('hdr');
+  var N = scenes.length, raf = null;
+
+  function frame(){
+    raf = null;
+    var rect = sec.getBoundingClientRect();
+    var total = sec.offsetHeight - window.innerHeight;
+    var p = Math.min(Math.max(-rect.top / total, 0), 1);   // 0..1 no trecho da seção
+    var f = p * (N - 1);                                    // posição contínua entre cenas
+    for (var i = 0; i < N; i++){
+      var d = f - i;
+      scenes[i].style.opacity = Math.max(0, 1 - Math.abs(d));
+      caps[i].style.opacity = Math.max(0, 1 - Math.abs(d) * 1.5);
+      caps[i].style.transform = 'translateY(' + (d * 26) + 'px)';
+    }
+    var active = Math.round(f);
+    dots.forEach(function(dt, idx){ dt.classList.toggle('on', idx === active); });
+    if (cue) cue.style.opacity = p > 0.04 ? 0 : 1;
+    // header transparente só enquanto a cena cobre o topo
+    var covering = rect.top <= 0 && rect.bottom > window.innerHeight * 0.6;
+    hdr.classList.toggle('on-cine', covering);
+  }
+  function onS(){ if (raf == null) raf = requestAnimationFrame(frame); }
+  window.addEventListener('scroll', onS, { passive:true });
+  window.addEventListener('resize', onS, { passive:true });
+  frame();
+
+  /* scroll suave (Lenis) — se o CDN carregar; senão, scroll nativo (degrada bem) */
+  if (!reduce && window.Lenis){
+    try {
+      var lenis = new window.Lenis({ duration:1.1, smoothWheel:true });
+      function ticker(t){ lenis.raf(t); requestAnimationFrame(ticker); }
+      requestAnimationFrame(ticker);
+      lenis.on('scroll', onS);
+    } catch(e) {}
+  }
+})();
+
+/* botões magnéticos (sutil) */
+if (!reduce){
+  document.querySelectorAll('[data-magnetic]').forEach(function(btn){
+    btn.style.transition = 'transform .15s ease, background .2s ease';
+    btn.addEventListener('pointermove', function(ev){
+      var r = btn.getBoundingClientRect();
+      btn.style.transform = 'translate('+((ev.clientX-r.left-r.width/2)*0.22)+'px,'+((ev.clientY-r.top-r.height/2)*0.32)+'px)';
+    });
+    btn.addEventListener('pointerleave', function(){ btn.style.transform=''; });
+  });
+}
+</script>
+</body>
+</html>
